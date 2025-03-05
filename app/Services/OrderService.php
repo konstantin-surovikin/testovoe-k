@@ -11,7 +11,7 @@ use App\DTO\PositionDTO;
 use App\Models\Order;
 use App\Models\Position;
 
-class OrderService
+final readonly class OrderService
 {
     public function getOrder(string $uuid): OrderDTO
     {

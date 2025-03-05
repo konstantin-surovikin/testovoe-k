@@ -14,7 +14,7 @@ Route::get('/mock-payment', [MockPaymentController::class, 'mockPay'])->name('mo
 Route::post('/auth/login', [AuthController::class, 'login']);
 Route::post('/auth/refresh', [AuthController::class, 'refresh']);
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware('auth:sanctum')->group(static function () {
     Route::post('/payment/check', [PaymentController::class, 'check'])
         ->name('payment.check');
 

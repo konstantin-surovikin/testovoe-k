@@ -6,20 +6,24 @@ namespace App\Services;
 
 use App\DTO\BucketDTO;
 use App\DTO\ProductDTO;
+use App\Jobs\CancelPaymentMessage;
 use App\Models\Order;
 use App\Models\PaymentType;
 use App\Models\Position;
 use App\Models\Product;
 use App\Models\User;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Throwable;
+use Illuminate\Contracts\Queue\Queue;
 
-final readonly class  BucketService
+final readonly class BucketService
 {
     public function __construct(
         private GeneratePaymentUrlService $generatePaymentUrlService,
+        private Queue $queue
     )
     {
     }
@@ -135,15 +139,17 @@ final readonly class  BucketService
             throw new Exception('Order is empty');
         }
 
+        $url = $this->generatePaymentUrlService->execute($paymentType);
+        $this->queue->later(
+            Carbon::now()->addMinutes(2),
+            new CancelPaymentMessage($order->id)
+        );
         $order->update([
             'status' => 'Unpaid',
             'payment_type_id' => PaymentType::where(['type' => $paymentType])->pluck('id')->first(),
         ]);
 
-        // TODO send to kafka
-        // Kafka::publish('order_unpaid', ['order_id' => $order->id]);
-
-        return $this->generatePaymentUrlService->execute($paymentType);
+        return $url;
     }
 
 }

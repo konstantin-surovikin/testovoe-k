@@ -72,6 +72,16 @@ return [
             'after_commit' => false,
         ],
 
+        'kafka' => [
+            'driver' => 'kafka',
+            'queue' => env('KAFKA_QUEUE', 'default'),
+            'brokers' => env('KAFKA_BROKERS', 'localhost:9092'),
+            'group_id' => env('KAFKA_GROUP_ID', 'laravel_queue'),
+            'auto_commit' => true,
+            'sleep_on_error' => 5,
+            'max_retries' => 3,
+        ],
+
     ],
 
     /*

@@ -10,7 +10,7 @@ use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\Hash;
 
-class AuthService
+final readonly class AuthService
 {
     /**
      * @param LoginDTO $loginDTO

@@ -8,7 +8,7 @@ use App\DTO\PaginationDTO;
 use App\DTO\ProductDTO;
 use App\Models\Product;
 
-class ProductService
+final readonly class ProductService
 {
     public function getProduct(int $id): ProductDTO
     {

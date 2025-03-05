@@ -6,39 +6,23 @@ COPY --from=extension_installer /usr/bin/install-php-extensions /usr/bin/
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 
 RUN install-php-extensions \
-    bcmath \
-    ctype \
     curl \
     dom \
     fileinfo \
     filter \
-    ftp \
-    gd \
-    gearman \
     hash \
-    http \
     iconv \
-    imagick \
     intl \
     json \
-    libsodium \
     libxml \
     mbstring \
-    openssl \
-    pcntl \
     pcre \
     pdo \
     pdo_mysql \
     pdo_pgsql \
     phar \
     posix \
-    protobuf \
-    raphf \
-    simplexml \
-    soap \
-    sockets \
-    tidy \
-    tokenizer \
+    rdkafka \
     xml \
     xmlreader \
     xmlwriter \

@@ -1,5 +1,31 @@
 services:
+  # TODO ADD HEALTHCHECK
   web:
+    image: surovikin-testovoe/php:latest
+    build:
+      context: .
+      dockerfile: ./docker/php/Dockerfile
+    working_dir: /app
+    environment:
+      XDEBUG_MODE: "develop,debug"
+      XDEBUG_CONFIG: "log_level=1
+                      log=/app/xdebug.log
+                      client_host=${XDEBUG_CLIENT_HOST}
+                      client_port=${XDEBUG_CLIENT_PORT}
+                      idekey=${XDEBUG_IDE_KEY}
+                      ${XDEBUG_EXTRA_PARAMS}"
+      PHP_IDE_CONFIG: "serverName=${APP_URL}"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - .:/app
+    depends_on:
+      - postgres
+      - kafka
+    networks:
+      - default
+
+  worker:
     image: surovikin-testovoe/php:latest
     build:
       context: .
@@ -12,6 +38,10 @@ services:
       - kafka
     networks:
       - default
+    command:
+      - php
+      - artisan
+      - queue:work
 
   nginx:
     image: nginx:stable-alpine
@@ -40,7 +70,6 @@ services:
 
   zookeeper:
     image: confluentinc/cp-zookeeper:6.2.0
-    container_name: zookeeper
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
@@ -49,7 +78,6 @@ services:
 
   kafka:
     image: confluentinc/cp-kafka:6.2.0
-    container_name: kafka
     depends_on:
       - zookeeper
     environment:

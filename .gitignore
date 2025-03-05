@@ -17,7 +17,7 @@ _ide_helper.php
 
 # Logs
 npm-debug.log*
-
+xdebug.log
 
 Thumbs.db
 .DS_Store
