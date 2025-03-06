@@ -12,10 +12,6 @@ use Illuminate\Http\JsonResponse;
 
 class AuthController extends Controller
 {
-    public function __construct()
-    {
-    }
-
     /**
      * @param LoginRequest $request
      * @param AuthService $authService
@@ -27,16 +23,13 @@ class AuthController extends Controller
         AuthService $authService,
     ): JsonResponse
     {
-        // TODO as DTO
-        return response()->json([
-            'result' => true,
-            'message' => null,
-            'data' => $authService->login(
+        return $this->withData(
+            $authService->login(
                 new LoginDTO(
                     $request->get('name'),
                     $request->get('password')
                 )
-            ),
-        ]);
+            )
+        );
     }
 }

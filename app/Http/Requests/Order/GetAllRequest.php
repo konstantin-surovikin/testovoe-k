@@ -6,6 +6,15 @@ namespace App\Http\Requests\Order;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * @property-read int $page
+ * @property-read int $perPage
+ * @property-read string $sortBy
+ * @property-read string $sortOrder
+ * @property-read string $from
+ * @property-read string $to
+ * @property-read string $status
+ */
 class GetAllRequest extends FormRequest
 {
     public function rules(): array

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Jobs;
 
 use App\Models\Order;
@@ -11,14 +13,14 @@ class CancelPaymentMessage implements ShouldQueue
     use Queueable;
 
     public function __construct(
-        private readonly int $id
+        private readonly string $uuid
     )
     {
     }
 
     public function handle(): void
     {
-        Order::where('id', $this->id)
+        Order::where('uuid', $this->uuid)
             ->where('status', 'Unpaid')
             ->first()
             ?->update(['status' => 'Denied']);

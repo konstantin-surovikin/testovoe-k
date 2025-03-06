@@ -4,35 +4,38 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\DTO\OrderFilterDTO;
-use App\DTO\PaginationDTO;
 use App\Http\Requests\Order\GetAllRequest;
-use App\Services\OrderService;
 use DateTimeImmutable;
+use Domain\Order\DTO\GetOrderListDTO;
+use Domain\Order\DTO\OrderFilterDTO;
+use Domain\Order\DTO\PaginationDTO;
+use Domain\Order\Enums\OrderStatuses;
+use Domain\Order\Exceptions\OrderIsNullException;
+use Domain\Order\Interfaces\Service\GetOrderListServiceInterface;
+use Domain\Order\Interfaces\Service\GetOrderServiceInterface;
 use Illuminate\Http\JsonResponse;
 
 class OrderController extends Controller
 {
-    public function __construct(
-        private readonly OrderService $orderService,
-    )
+    /**
+     * @param string $uuid
+     * @param GetOrderServiceInterface $getOrderService
+     * @return JsonResponse
+     * @throws OrderIsNullException
+     */
+    public function getOne(
+        string $uuid,
+        GetOrderServiceInterface $getOrderService
+    ): JsonResponse
     {
+        return $this->withData($getOrderService->execute($uuid));
     }
 
-    public function getOne(string $uuid): JsonResponse
+    public function getAll(
+        GetAllRequest $request,
+        GetOrderListServiceInterface $getOrderListService
+    ): JsonResponse
     {
-        $orderDTO = $this->orderService->getOrder($uuid);
-
-        return response()->json([
-            'result' => true,
-            'message' => null,
-            'data' => $orderDTO,
-        ]);
-    }
-
-    public function getAll(GetAllRequest $request): JsonResponse
-    {
-
         $paginationDTO = new PaginationDTO(
             $request->page ?? 0,
             $request->perPage ?? 15,
@@ -48,19 +51,13 @@ class OrderController extends Controller
         if ($request->to !== null) {
             $to = DateTimeImmutable::createFromFormat('Y-m-d', $request->to);
         }
+        $status = null;
+        if ($request->status !== null) {
+            $status = OrderStatuses::from($request->status);
+        }
 
-        $orderFilterDTO = new OrderFilterDTO(
-            $from,
-            $to,
-            $request->status
-        );
+        $orderFilterDTO = new OrderFilterDTO($from, $to, $status);
 
-        $orders = $this->orderService->getOrders($paginationDTO, $orderFilterDTO);
-
-        return response()->json([
-            'result' => true,
-            'message' => null,
-            'data' => $orders,
-        ]);
+        return $this->withData($getOrderListService->execute(new GetOrderListDTO($paginationDTO, $orderFilterDTO)));
     }
 }

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\DTO;
+namespace Domain\Order\DTO;
 
 final readonly class PaginationDTO
 {

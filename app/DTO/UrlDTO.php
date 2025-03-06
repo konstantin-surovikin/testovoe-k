@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\DTO;
 
-final readonly class TokenDTO
+final readonly class UrlDTO
 {
     public function __construct(
-        public BearerTokenDTO $bearerToken,
+        public string $url,
     )
     {
     }

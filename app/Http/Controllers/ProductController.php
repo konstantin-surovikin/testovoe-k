@@ -4,43 +4,41 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\DTO\PaginationDTO;
 use App\Http\Requests\Product\GetAllRequest;
-use App\Services\ProductService;
+use Domain\Order\DTO\PaginationDTO;
+use Domain\Order\Exceptions\ProductIsNullException;
+use Domain\Order\Interfaces\Service\GetProductListServiceInterface;
+use Domain\Order\Interfaces\Service\GetProductServiceInterface;
 use Illuminate\Http\JsonResponse;
 
 class ProductController extends Controller
 {
-    public function __construct(
-        private readonly ProductService $productService
-    )
+    /**
+     * @param int $id
+     * @param GetProductServiceInterface $getProductService
+     * @return JsonResponse
+     * @throws ProductIsNullException
+     */
+    public function getOne(
+        int $id,
+        GetProductServiceInterface $getProductService
+    ): JsonResponse
     {
+        return $this->withData($getProductService->execute($id));
     }
 
-    public function getOne(int $id): JsonResponse
+    public function getAll(
+        GetAllRequest $request,
+        GetProductListServiceInterface $getProductListService
+    ): JsonResponse
     {
-        return response()->json([
-            'result' => true,
-            'message' => null,
-            'data' => $this->productService->getProduct($id),
-        ]);
-    }
-
-    public function getAll(GetAllRequest $request): JsonResponse
-    {
-        $paginationDTO = new PaginationDTO(
-            $request->page ?? 0,
-            $request->perPage ?? 15,
-            $request->sortBy,
-            $request->sortOrder
-        );
-
-        $products = $this->productService->getProducts($paginationDTO);
-
-        return response()->json([
-            'result' => true,
-            'message' => null,
-            'data' => $products,
-        ]);
+        return $this->withData($getProductListService->execute(
+            new PaginationDTO(
+                $request->page ?? 0,
+                $request->perPage ?? 15,
+                $request->sortBy,
+                $request->sortOrder
+            )
+        ));
     }
 }

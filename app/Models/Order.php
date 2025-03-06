@@ -8,8 +8,8 @@ use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
 
 /**
@@ -49,9 +49,9 @@ class Order extends Model
         return $this->hasMany(Position::class);
     }
 
-    public function paymentType(): HasOne
+    public function paymentType(): BelongsTo
     {
-        return $this->hasOne(PaymentType::class);
+        return $this->belongsTo(PaymentType::class);
     }
 
 

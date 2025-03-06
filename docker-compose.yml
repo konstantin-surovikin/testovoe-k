@@ -1,5 +1,4 @@
 services:
-  # TODO ADD HEALTHCHECK
   web:
     image: surovikin-testovoe/php:latest
     build:
@@ -20,8 +19,10 @@ services:
     volumes:
       - .:/app
     depends_on:
-      - postgres
-      - kafka
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
     networks:
       - default
 
@@ -34,8 +35,10 @@ services:
     volumes:
       - .:/app
     depends_on:
-      - postgres
-      - kafka
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
     networks:
       - default
     command:
@@ -63,6 +66,12 @@ services:
       POSTGRES_USER: "${DB_DATABASE}"
       POSTGRES_PASSWORD: "${DB_USERNAME}"
       POSTGRES_DB: "${DB_PASSWORD}"
+    healthcheck:
+      test: ["CMD", "psql", "-U", "${DB_USERNAME}", "-d", "${DB_DATABASE}", "-c", "SELECT 1"]
+      interval: 2s
+      timeout: 2s
+      retries: 5
+      start_period: 10s
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
@@ -80,6 +89,12 @@ services:
     image: confluentinc/cp-kafka:6.2.0
     depends_on:
       - zookeeper
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "9092"]
+      interval: 2s
+      timeout: 2s
+      retries: 5
+      start_period: 10s
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181

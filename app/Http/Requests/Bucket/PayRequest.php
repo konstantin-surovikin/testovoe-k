@@ -6,6 +6,9 @@ namespace App\Http\Requests\Bucket;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * @property-read string $payment_type
+ */
 class PayRequest extends FormRequest
 {
     public function rules(): array

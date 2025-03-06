@@ -6,6 +6,9 @@ namespace App\Http\Requests\Order;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * @property-read string $id
+ */
 class GetOneRequest extends FormRequest
 {
     public function rules(): array

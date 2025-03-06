@@ -9,7 +9,6 @@ use Illuminate\Http\JsonResponse;
 
 class MockPaymentController extends Controller
 {
-
     public function mockPay(): JsonResponse
     {
         return response()->json([

@@ -5,27 +5,25 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Payment\CheckRequest;
-use App\Services\OrderPaymentService;
+use Domain\Order\Exceptions\OrderIsNullException;
+use Domain\Order\Interfaces\Service\ConfirmPaymentServiceInterface;
 use Illuminate\Http\JsonResponse;
 
 class PaymentController extends Controller
 {
-    public function __construct()
-    {
-    }
-
+    /**
+     * @param CheckRequest $request
+     * @param ConfirmPaymentServiceInterface $orderPaymentService
+     * @return JsonResponse
+     * @throws OrderIsNullException
+     */
     public function check(
         CheckRequest $request,
-        OrderPaymentService $orderPaymentService,
+        ConfirmPaymentServiceInterface $orderPaymentService,
     ): JsonResponse
     {
-        $orderPaymentService->confirmPayment(auth()->id(), $request->uuid);
+        $orderPaymentService->execute($request->uuid);
 
-        return response()->json([
-            'result' => true,
-            'message' => null,
-            'data' => null,
-        ]);
+        return $this->withData();
     }
 }
-

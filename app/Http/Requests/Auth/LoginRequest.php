@@ -6,6 +6,10 @@ namespace App\Http\Requests\Auth;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * @property-read string $name
+ * @property-read string $password
+ */
 class LoginRequest extends FormRequest
 {
     public function rules(): array

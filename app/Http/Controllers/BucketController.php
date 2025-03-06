@@ -4,67 +4,75 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\DTO\UrlDTO;
 use App\Http\Requests\Bucket\AddProductRequest;
 use App\Http\Requests\Bucket\PayRequest;
-use App\Services\BucketService;
-use Exception;
+use Domain\Order\Enums\PaymentTypes;
+use Domain\Order\Exceptions\OrderIsEmptyException;
+use Domain\Order\Exceptions\ProductIsNullException;
+use Domain\Order\Interfaces\Service\AddProductServiceInterface;
+use Domain\Order\Interfaces\Service\GetBucketServiceInterface;
+use Domain\Order\Interfaces\Service\PayServiceInterface;
+use Domain\Order\Interfaces\Service\RemoveProductServiceInterface;
 use Illuminate\Http\JsonResponse;
 
 class BucketController extends Controller
 {
-    public function __construct(
-        private readonly BucketService $bucketService
-    )
+    public function getBucket(
+        GetBucketServiceInterface $getBucketService,
+    ): JsonResponse
     {
+        return $this->withData($getBucketService->execute());
     }
 
-    public function getBucket(): JsonResponse
+    /**
+     * @param AddProductRequest $request
+     * @param AddProductServiceInterface $addProductService
+     * @return JsonResponse
+     * @throws ProductIsNullException
+     */
+    public function addProduct(
+        AddProductRequest $request,
+        AddProductServiceInterface $addProductService
+    ): JsonResponse
     {
-        $bucketDTO = $this->bucketService->getBucket(auth()->id());
+        $addProductService->execute($request->id);
 
-        return response()->json([
-            'result' => true,
-            'message' => null,
-            'data' => $bucketDTO,
-        ]);
+        return $this->withData();
     }
 
-    public function addProduct(AddProductRequest $request): JsonResponse
+    /**
+     * @param int $id
+     * @param RemoveProductServiceInterface $removeProductService
+     * @return JsonResponse
+     * @throws ProductIsNullException
+     */
+    public function removeProduct(
+        int $id,
+        RemoveProductServiceInterface $removeProductService
+    ): JsonResponse
     {
-        $this->bucketService->addProduct(auth()->id(), $request->id);
+        $removeProductService->execute($id);
 
-        return response()->json([
-            'result' => true,
-            'message' => null,
-            'data' => null,
-        ]);
-    }
-
-    public function removeProduct(int $id): JsonResponse
-    {
-        $this->bucketService->removeProduct(auth()->id(), $id);
-
-        return response()->json([
-            'result' => true,
-            'message' => null,
-            'data' => null,
-        ]);
+        return $this->withData();
     }
 
     /**
      * @param PayRequest $request
+     * @param PayServiceInterface $payService
      * @return JsonResponse
-     * @throws Exception
+     * @throws OrderIsEmptyException
      */
-    public function pay(PayRequest $request): JsonResponse
+    public function pay(
+        PayRequest $request,
+        PayServiceInterface $payService
+    ): JsonResponse
     {
-        $paymentLink = $this->bucketService->payOrder(auth()->id(), $request->payment_type);
-
-        return response()->json([
-            'result' => true,
-            'message' => null,
-            'data' => $paymentLink,
-        ]);
+        return $this->withData(
+            new UrlDTO(
+                $payService->execute(PaymentTypes::from($request->payment_type))
+            )
+        );
     }
 }
 

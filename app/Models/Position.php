@@ -23,17 +23,17 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $updated_at
  * @property-read Order $order
  * @property-read Product $product
- * @method static Builder<static>|Position newModelQuery()
- * @method static Builder<static>|Position newQuery()
- * @method static Builder<static>|Position query()
- * @method static Builder<static>|Position whereAmount($value)
- * @method static Builder<static>|Position whereCost($value)
- * @method static Builder<static>|Position whereCreatedAt($value)
- * @method static Builder<static>|Position whereId($value)
- * @method static Builder<static>|Position whereName($value)
- * @method static Builder<static>|Position whereOrderId($value)
- * @method static Builder<static>|Position whereProductId($value)
- * @method static Builder<static>|Position whereUpdatedAt($value)
+ * @method static Builder<static> newModelQuery()
+ * @method static Builder<static> newQuery()
+ * @method static Builder<static> query()
+ * @method static Builder<static> whereAmount($value)
+ * @method static Builder<static> whereCost($value)
+ * @method static Builder<static> whereCreatedAt($value)
+ * @method static Builder<static> whereId($value)
+ * @method static Builder<static> whereName($value)
+ * @method static Builder<static> whereOrderId($value)
+ * @method static Builder<static> whereProductId($value)
+ * @method static Builder<static> whereUpdatedAt($value)
  * @mixin Eloquent
  */
 class Position extends Model

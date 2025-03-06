@@ -6,6 +6,9 @@ namespace App\Http\Requests\Bucket;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * @property-read int $id
+ */
 class AddProductRequest extends FormRequest
 {
     public function rules(): array

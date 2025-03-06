@@ -2,14 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\DTO;
+namespace Domain\Order\DTO\Order;
 
 final readonly class PositionDTO
 {
     public function __construct(
-        public int $id,
-        public string $name,
-        public int $cost,
+        public ProductDTO $product,
         public int $amount,
     )
     {
