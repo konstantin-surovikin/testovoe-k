@@ -38,9 +38,3 @@ seed:
 install: cp-env build up composer-install migrate
 
 install-dev: install install-xdebug seed
-
-php-stan:
-	@docker compose exec web php -d memory_limit=2G vendor/bin/phpstan analyse src tests -l 9
-
-php-test:
-	@docker compose exec web php -d memory_limit=2G ./vendor/bin/phpunit
